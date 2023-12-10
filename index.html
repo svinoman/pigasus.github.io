@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Website Title</title>
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,9 +9,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      height: 100vh; /* Make the body take the full height of the viewport */
-      margin: 0; /* Remove default margin */
-      position: relative; /* Make the body a positioning context */
     }
 
     h1 {
@@ -34,45 +25,26 @@
       height: auto;
     }
 
-    /* Styling for the Twitter timeline */
-    .twitter-timeline {
-      display: block; /* Show by default */
-      width: 300px; /* Adjust the width as needed */
-      max-height: 400px; /* Set the maximum height */
-      overflow-y: auto; /* Add vertical scroll if needed */
-      position: absolute;
-      top: 50%; /* Center vertically */
-      transform: translateY(-50%); /* Adjust for half of the timeline's height */
-      right: 50px; /* Move a bit to the left */
-    }
-
-    /* Media query for smaller screens (mobile) */
-    @media (max-width: 600px) {
-      .twitter-timeline {
-        display: none; /* Hide on smaller screens */
-      }
+    .twitter-container {
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Embedded Twitter Timeline -->
-  <a class="twitter-timeline"
-    href="https://twitter.com/pigasuslol"
-    data-tweet-limit="1"
-    data-chrome="noheader nofooter noborders transparent"
-    data-width="300">
-    <!--Tweets by @pigasuslol-->
-  </a>
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <h1> Welcome </h1>
 
-  <h1>Welcome</h1>
-
-  <p>Welcome to pigasus.lol</p>
-  <p>May God bless you.</p>
+  <p> Welcome to pigasus.lol </p>
+  <p> May God bless you. </p>
 
   <p><img src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true" /></p>
+
+  <div class="twitter-container">
+    <a class="twitter-timeline" data-lang="en" data-width="300" data-height="400" data-dnt="true" href="https://twitter.com/pigasuslol?ref_src=twsrc%5Etfw"></a>
+  </div>
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 </body>
 
