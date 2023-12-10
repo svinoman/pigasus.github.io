@@ -36,6 +36,7 @@
 
     /* Styling for the Twitter timeline */
     .twitter-timeline {
+      display: block; /* Show by default */
       width: 300px; /* Adjust the width as needed */
       max-height: 400px; /* Set the maximum height */
       overflow-y: auto; /* Add vertical scroll if needed */
@@ -43,6 +44,13 @@
       top: 50%; /* Center vertically */
       transform: translateY(-50%); /* Adjust for half of the timeline's height */
       right: 50px; /* Move a bit to the left */
+    }
+
+    /* Media query for smaller screens (mobile) */
+    @media (max-width: 600px) {
+      .twitter-timeline {
+        display: none; /* Hide on smaller screens */
+      }
     }
   </style>
 </head>
