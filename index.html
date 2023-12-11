@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
   <style>
@@ -28,6 +29,24 @@
     .twitter-container {
       display: flex;
       justify-content: center;
+      margin-top: 20px; /* Add some top margin to separate from content above */
+    }
+
+    canvas {
+      border: 1px solid #000;
+      margin-top: 600px; /* Add margin to separate canvas from Twitter button */
+      position: absolute;
+    }
+
+    #startScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      background-color: transparent;
+      z-index: 1;
+      top: 900px; /* Set top to 0 to start from the top of the viewport */
     }
   </style>
 </head>
@@ -42,9 +61,246 @@
   <p><img src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true" /></p>
 
   <div class="twitter-container">
-    <a class="twitter-timeline" data-lang="en" data-width="300" data-height="400" data-dnt="true" href="https://twitter.com/pigasuslol?ref_src=twsrc%5Etfw"></a>
+    <a href="https://twitter.com/pigasuslol" class="twitter-follow-button" data-lang="en" data-dnt="true"
+      data-show-count="false"></a>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+  <div id="startScreen">
+    <h2 id="startScreenText">Welcome to the Game!</h2>
+    <p>Highest Score: <span id="highestScore">0</span></p>
+    <button onclick="startGame()">Start</button>
+  </div>
+
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+		ctx.fillStyle = "black";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const startScreen = document.getElementById('startScreen');
+    const startScreenText = document.getElementById('startScreenText');
+    const highestScoreElement = document.getElementById('highestScore');
+
+    let gameActive = false;
+    let player;
+    let enemy;
+    let item;
+    let walls;
+    let highestScore = 0;
+    let wallImage;
+    let insideImage;
+
+    function startGame() {
+      gameActive = true;
+      startScreen.style.display = 'none';
+      startScreenText.textContent = 'Welcome to the Game!';
+
+      player = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        width: 60,
+        height: 60,
+        angle: 0,
+        speed: 5,
+        score: 0,
+        image: new Image(),
+      };
+
+      enemy = {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        width: 60,
+        height: 60,
+        speed: 2,
+        image: new Image(),
+      };
+
+      item = {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        width: 60,
+        height: 60,
+        speedBoost: 0.1,
+        image: new Image(),
+      };
+
+      walls = [
+        { x: 0, y: 0, width: canvas.width, height: 20 },
+        { x: 0, y: 0, width: 20, height: canvas.height },
+        { x: canvas.width - 20, y: 0, width: 20, height: canvas.height },
+        { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 },
+      ];
+
+      // Set image sources
+      player.image.src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true";
+      enemy.image.src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true";
+      item.image.src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true";
+
+      // Example wall image
+      wallImage = new Image();
+      wallImage.src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true";
+
+      // Example image inside the walls
+      insideImage = new Image();
+      insideImage.src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true";
+
+      gameLoop();
+    }
+
+    function update() {
+      // Update player position based on angle and speed
+      player.x += Math.cos(player.angle) * player.speed;
+      player.y += Math.sin(player.angle) * player.speed;
+
+      // Update enemy position towards the player
+      const angleToPlayer = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+      enemy.x += Math.cos(angleToPlayer) * enemy.speed;
+      enemy.y += Math.sin(angleToPlayer) * enemy.speed;
+
+      // Update item position
+      if (isCollision(player, item)) {
+        // Player collected the item
+        player.score += 1;
+        highestScore = Math.max(highestScore, player.score);
+        enemy.speed += item.speedBoost;
+        respawnItem();
+      }
+
+      // Check for collisions with walls
+      checkWallCollisions(player);
+      checkWallCollisions(enemy);
+
+      // Check if the enemy reaches the player
+      if (isCollision(player, enemy)) {
+        gameActive = false;
+        startScreen.style.display = 'flex';
+        startScreenText.textContent = 'Happiness';
+        highestScoreElement.textContent = highestScore;
+        resetGame();
+      }
+
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw walls
+      ctx.fillStyle = 'gray';
+      for (const wall of walls) {
+        ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
+        // Draw the image inside the walls
+        ctx.drawImage(wallImage, wall.x, wall.y, wall.width, wall.height);
+      }
+
+      // Draw image inside the playable area
+      const insideWidth = canvas.width - 40; // Reduce 20 pixels from each side
+      const insideHeight = canvas.height - 40; // Reduce 20 pixels from each side
+      ctx.drawImage(insideImage, 20, 20, insideWidth, insideHeight);
+
+      // Draw the item
+      ctx.drawImage(item.image, item.x - item.width / 2, item.y - item.height / 2, item.width, item.height);
+
+      // Draw the enemy
+      ctx.drawImage(enemy.image, enemy.x - enemy.width / 2, enemy.y - enemy.height / 2, enemy.width, enemy.height);
+
+      // Draw the player
+      ctx.drawImage(player.image, player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+
+      // Draw the field of vision cone
+      ctx.fillStyle = 'rgba(249, 238, 214, 0.3)';
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y);
+      ctx.arc(player.x, player.y, 200, player.angle - Math.PI / 8, player.angle + Math.PI / 8);
+      ctx.lineTo(player.x, player.y);
+      ctx.fill();
+      ctx.closePath();
+
+      // Draw the player score
+      ctx.fillStyle = 'black';
+      ctx.font = '20px Arial';
+      ctx.fillText('Score: ' + player.score, 10, 30);
+    }
+
+    function resetGame() {
+      player = null;
+      enemy = null;
+      item = null;
+      walls = null;
+      wallImage = null;
+      insideImage = null;
+    }
+
+    function checkWallCollisions(entity) {
+      for (const wall of walls) {
+        if (
+          entity.x - entity.width / 2 < wall.x + wall.width &&
+          entity.x + entity.width / 2 > wall.x &&
+          entity.y - entity.height / 2 < wall.y + wall.height &&
+          entity.y + entity.height / 2 > wall.y
+        ) {
+          // Collision with a wall, adjust the entity's position
+          if (entity.x < wall.x) entity.x = wall.x - entity.width / 2;
+          if (entity.x > wall.x + wall.width) entity.x = wall.x + wall.width + entity.width / 2;
+          if (entity.y < wall.y) entity.y = wall.y - entity.height / 2;
+          if (entity.y > wall.y + wall.height) entity.y = wall.y + wall.height + entity.height / 2;
+        }
+      }
+    }
+
+    function respawnItem() {
+      item.x = Math.random() * canvas.width;
+      item.y = Math.random() * canvas.height;
+    }
+
+    function isInFieldOfVision(player, target) {
+      const angleToTarget = Math.atan2(target.y - player.y, target.x - player.x);
+      const angleDifference = Math.abs(angleToTarget - player.angle);
+      return angleDifference < Math.PI / 8;
+    }
+
+    function isCollision(player, item) {
+      return (
+        player.x - player.width / 2 < item.x + item.width / 2 &&
+        player.x + player.width / 2 > item.x - item.width / 2 &&
+        player.y - player.height / 2 < item.y + item.height / 2 &&
+        player.y + player.height / 2 > item.y - item.height / 2
+      );
+    }
+
+
+
+  function rotateLeft() {
+    player.angle -= 0.1;
+  }
+
+  function rotateRight() {
+    player.angle += 0.1;
+  }
+
+  function keyDownHandler(event) {
+    if (event.key === 'ArrowUp') {
+      player.speed = 5;
+    } else if (event.key === 'ArrowLeft') {
+      rotateLeft();
+    } else if (event.key === 'ArrowRight') {
+      rotateRight();
+    }
+  }
+
+
+  function gameLoop() {
+    if (gameActive) {
+      update();
+      requestAnimationFrame(gameLoop);
+    }
+  }
+
+  document.addEventListener('keydown', keyDownHandler, false);
+  document.addEventListener('keyup', keyUpHandler, false);
+
+  // Show start screen initially
+  startScreen.style.display = 'flex';
+  </script>
 
 </body>
 
