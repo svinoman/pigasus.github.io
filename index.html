@@ -34,7 +34,7 @@
 
     canvas {
       border: 1px solid #000;
-      margin-top: 600px; /* Add margin to separate canvas from Twitter button */
+      margin-top: 450px; /* Add margin to separate canvas from Twitter button */
       position: absolute;
     }
 
@@ -46,8 +46,35 @@
       position: absolute;
       background-color: transparent;
       z-index: 1;
-      top: 900px; /* Set top to 0 to start from the top of the viewport */
+      top: 750px; /* Set top to 0 to start from the top of the viewport */
     }
+		#startScreenText {
+  color: #ffffff; /* Change to your desired color */
+}
+
+#highestScore {
+  color: #ffffff; /* Change to your desired color */
+}
+#buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 650px;
+}
+
+#rotateLeftButton,
+#rotateRightButton {
+  padding: 50px;
+  font-size: 50px;
+  background-color: #d1c9c9; /* Green background */
+  color: white;
+  border: 1px solid #000000; /* Green border */
+  cursor: pointer;
+}
+
+#rotateRightButton {
+  background-color: #d1c9c9; /* Red background */
+  border: 1px solid #000000; /* Red border */
+}
   </style>
 </head>
 
@@ -58,7 +85,7 @@
   <p> Welcome to pigasus.lol </p>
   <p> May God bless you. </p>
 
-  <p><img src="https://github.com/svinoman/svinoman.github.io/blob/main/Frieren.gif?raw=true" /></p>
+  <p><img src="https://github.com/svinoman/svinoman.github.io/blob/main/ulitka.gif?raw=true" /></p>
 
   <div class="twitter-container">
     <a href="https://twitter.com/pigasuslol" class="twitter-follow-button" data-lang="en" data-dnt="true"
@@ -67,12 +94,17 @@
   </div>
 
   <div id="startScreen">
-    <h2 id="startScreenText">Welcome to the Game!</h2>
+    <h2 id="startScreenText">Fungiman.lol</h2>
     <p>Highest Score: <span id="highestScore">0</span></p>
-    <button onclick="startGame()">Start</button>
+    <button onclick="startGame()">Play</button>
   </div>
 
   <canvas id="gameCanvas" width="800" height="600"></canvas>
+  
+  <div id="buttonContainer">
+  <button id="rotateLeftButton" onclick="rotateLeftSteep()">↰</button>
+  <button id="rotateRightButton" onclick="rotateRightSteep()">↱</button>
+</div>
 
   <script>
     const canvas = document.getElementById('gameCanvas');
@@ -95,7 +127,7 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
     function startGame() {
       gameActive = true;
       startScreen.style.display = 'none';
-      startScreenText.textContent = 'Welcome to the Game!';
+      startScreenText.textContent = 'Fungiman.lol';
 
       player = {
         x: canvas.width / 2,
@@ -140,11 +172,11 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Example wall image
       wallImage = new Image();
-      wallImage.src="https://github.com/svinoman/svinoman.github.io/blob/main/grassnight.png?raw=true";
+      wallImage.src="https://github.com/svinoman/svinoman.github.io/blob/main/grassday.png?raw=true";
 
       // Example image inside the walls
       insideImage = new Image();
-      insideImage.src="https://github.com/svinoman/svinoman.github.io/blob/main/grassnight.png?raw=true";
+      insideImage.src="https://github.com/svinoman/svinoman.github.io/blob/main/grassday.png?raw=true";
 
       gameLoop();
     }
@@ -183,6 +215,8 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Clear the canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+	  		ctx.fillStyle = "black";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw walls
       ctx.fillStyle = 'gray';
@@ -216,7 +250,7 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.closePath();
 
       // Draw the player score
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = 'white';
       ctx.font = '20px Arial';
       ctx.fillText('Score: ' + player.score, 10, 30);
     }
@@ -276,6 +310,13 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
   function rotateRight() {
     player.angle += 0.1;
   }
+  function rotateLeftSteep() {
+    player.angle -= 0.5;
+  }
+
+  function rotateRightSteep() {
+    player.angle += 0.5;
+  }
 
   function keyDownHandler(event) {
     if (event.key === 'ArrowUp') {
@@ -297,6 +338,7 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   document.addEventListener('keydown', keyDownHandler, false);
   document.addEventListener('keyup', keyUpHandler, false);
+  
 
   // Show start screen initially
   startScreen.style.display = 'flex';
