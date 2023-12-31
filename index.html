@@ -41,11 +41,15 @@
       justify-content: center;
       margin-top: 20px; /* Add some top margin to separate from content above */
     }
-
+	
+	#GameCollection {
+	margin-top: 0px;
+	}
+	
     canvas {
       border: 1px solid #000;
-      margin-top: 650px; /* Add margin to separate canvas from Twitter button */
-      position: absolute;
+      margin-top: 20px; /* Add margin to separate canvas from Twitter button */
+	  position: relative;
     }
 
     #startScreen {
@@ -53,10 +57,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: absolute;
       background-color: transparent;
+	  position: relative;
       z-index: 1;
-      top: 850px; /* Set top to 0 to start from the top of the viewport */
+      margin-top: -600px; /* Set top to 0 to start from the top of the viewport */
     }
 		#startScreenText {
   color: #ffffff; /* Change to your desired color */
@@ -74,7 +78,8 @@
 #buttonContainer {
   display: flex;
   justify-content: space-between;
-  margin-top: 650px;
+  margin-top: 0px;
+  position: relative;
 }
 
 #rotateLeftButton,
@@ -85,6 +90,10 @@
   color: white;
   border: 1px solid #000000; /* Green border */
   cursor: pointer;
+}
+#controlsText {
+margin-top: 75px;
+font-size: 20px;
 }
 
 #rotateRightButton {
@@ -109,17 +118,18 @@
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
   </div>
 
+<div id="GameCollection">
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+  <div id="buttonContainer">
+  <button id="rotateLeftButton" onclick="rotateLeftSteep()">↰</button>
+  <p id="controlsText">(You can also use arrow keys on your keyboard)</p>
+  <button id="rotateRightButton" onclick="rotateRightSteep()">↱</button>
+</div>
   <div id="startScreen">
     <h2 id="startScreenText">Fungiman.lol</h2>
     <p>Highest Score: <span id="highestScore">0</span></p>
     <button onclick="startGame()" class="play-button">Play</button>
   </div>
-
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
-  
-  <div id="buttonContainer">
-  <button id="rotateLeftButton" onclick="rotateLeftSteep()">↰</button>
-  <button id="rotateRightButton" onclick="rotateRightSteep()">↱</button>
 </div>
 
   <script>
